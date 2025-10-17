@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CoinSpot — New Crypto Tracker</title>
+  <meta name="description" content="CoinSpot is the fast, clean tracker for the Believe ecosystem — discover new creator coins, trends, and Believe early." />
+  <link rel="canonical" href="https://your-domain.example/" />
+  <meta property="og:title" content="CoinSpot — New Crypto Tracker" />
+  <meta property="og:description" content="Track new SOL coins & creators. Believe early." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://dummyimage.com/1200x630/121212/00C254&text=CoinSpot" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data: blob:; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com; connect-src https://api.dexscreener.com; frame-ancestors 'self';">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root { --color-primary-green:#00C254; --color-dark-bg:#1A1A1A; --color-very-dark-bg:#121212; --color-card-bg:#222222; }
+    html { scroll-behavior:smooth; } body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial; background:var(--color-dark-bg); color:#E0E0E0; }
+    .text-primary-green{color:var(--color-primary-green);} .bg-primary-green{background:var(--color-primary-green);} .bg-very-dark{background:var(--color-very-dark-bg);} .bg-card{background:var(--color-card-bg);}
+    .btn-primary{transition:all .2s ease; box-shadow:0 4px 15px rgba(0,194,84,.2);} .btn-primary:hover{opacity:.92; box-shadow:0 6px 20px rgba(0,194,84,.4); transform:translateY(-1px);}
+    .table-row-hover:hover{background:#282828 !important;} .coinspot-icon-svg{transform:scale(.9);} .hero-wrapper{background:#161616; background-image:radial-gradient(at 50% 10%, rgba(0,194,84,.08), transparent 70%); border-bottom:1px solid rgba(0,194,84,.1);} .badge{display:inline-flex;align-items:center;gap:.5rem;padding:.25rem .5rem;border-radius:9999px;font-size:.7rem;border:1px solid} .status{position:sticky;top:64px;z-index:60}
+  </style>
+</head>
+<body class="min-h-screen">
+  <div id="statusBanner" class="status hidden"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div id="statusBox" class="mt-3 rounded-lg border px-4 py-3 text-sm flex items-start gap-3"></div></div></div>
+  <nav class="bg-very-dark sticky top-0 z-50 shadow-lg border-b border-[#282828] py-4" aria-label="Primary">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+      <a href="#" class="flex items-center space-x-2" aria-label="CoinSpot Home">
+        <div class="w-7 h-7 rounded-lg bg-primary-green flex items-center justify-center scale-110">
+          <svg class="coinspot-icon-svg" width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CoinSpot icon">
+            <rect x="2.5" y="2.5" width="30" height="30" rx="6" fill="#00C254"/>
+            <path d="M23.0877 12.0877L18.7308 16.4446M23.0877 12.0877L21.4394 16.4446M23.0877 12.0877L18.7308 13.736" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11.6667 24.5L17.5 18.6667L23.0833 24.25" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="text-xl font-extrabold text-white tracking-wider">CoinSpot</span>
+      </a>
+      <div class="hidden md:flex space-x-8 text-sm font-medium">
+        <a href="#" class="text-white hover:text-primary-green">Home</a>
+        <a href="#new-coins" class="text-primary-green font-semibold">New Coins</a>
+        <a href="#submit" class="text-white hover:text-primary-green">Submit</a>
+        <a href="#about" class="text-white hover:text-primary-green">About</a>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button class="p-2 rounded-full hover:bg-[#282828] hidden md:block" aria-label="Search"><i data-lucide="search" class="w-5 h-5 text-gray-400"></i></button>
+        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-full hover:bg-[#282828]" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><i data-lucide="menu" class="w-6 h-6 text-white"></i></button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="md:hidden hidden px-4 pt-2 pb-3 space-y-1 bg-very-dark border-t border-[#282828]" role="navigation">
+      <a href="#" class="block px-3 py-2 text-base font-medium text-white hover:bg-[#282828] rounded-md">Home</a>
+      <a href="#new-coins" class="block px-3 py-2 text-base font-medium text-primary-green bg-[#282828] rounded-md">New Coins</a>
+      <a href="#submit" class="block px-3 py-2 text-base font-medium text-white hover:bg-[#282828] rounded-md">Submit</a>
+      <a href="#about" class="block px-3 py-2 text-base font-medium text-white hover:bg-[#282828] rounded-md">About</a>
+    </div>
+  </nav>
+  <div class="w-full hero-wrapper">
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16">
+      <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-3 leading-tight">Where True Creators <span class="text-primary-green">Believe</span> and Build.</h1>
+      <p class="text-base md:text-lg text-gray-400 mb-2 tracking-wide uppercase">Official tracker for the Believe ecosystem</p>
+      <p class="text-xl text-gray-400 mb-8 max-w-3xl mx-auto">CoinSpot tracks new movements and helps you discover the next asset you can <strong>Believe</strong> in.</p>
+      <div class="flex items-center justify-center gap-3">
+        <a href="#new-coins" class="btn-primary bg-primary-green text-white px-6 md:px-8 py-3 rounded-xl text-base md:text-lg font-bold shadow-2xl">View New Coins</a>
+        <a href="#submit" class="bg-card border border-[#333333] text-gray-200 hover:bg-[#282828] px-6 md:px-8 py-3 rounded-xl text-base md:text-lg font-semibold">Submit Project</a>
+      </div>
+    </header>
+  </div>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <section class="py-12" aria-labelledby="trending-title">
+      <h2 id="trending-title" class="text-3xl font-bold text-white mb-8 border-b-2 border-primary-green inline-block pb-1">Trending New Coins</h2>
+      <div id="trendingSkeleton" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="animate-pulse bg-card p-6 rounded-2xl border border-[#333333]"></div>
+        <div class="animate-pulse bg-card p-6 rounded-2xl border border-[#333333]"></div>
+        <div class="animate-pulse bg-card p-6 rounded-2xl border border-[#333333]"></div>
+      </div>
+      <div id="trendingCards" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden"></div>
+    </section>
+    <section class="py-12" id="new-coins" aria-labelledby="listings-title">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <h2 id="listings-title" class="text-3xl font-bold text-white">New Coin Listings</h2>
+        <div class="flex flex-wrap md:items-center gap-3 w-full md:w-auto">
+          <input id="searchInput" type="text" placeholder="Search Coin or Creator..." class="p-3 rounded-xl bg-card border border-[#333333] text-white focus:ring-primary-green focus:border-primary-green w-full md:w-56" />
+          <select id="chainSelect" class="p-3 rounded-xl bg-card border border-[#333333] text-white focus:ring-primary-green focus:border-primary-green appearance-none cursor-pointer"><option value="solana">Blockchain: Solana</option></select>
+          <select id="timeSelect" class="p-3 rounded-xl bg-card border border-[#333333] text-white focus:ring-primary-green focus:border-primary-green appearance-none cursor-pointer"><option value="24h">Time: Last 24h</option><option value="12h">Last 12h</option><option value="6h">Last 6h</option><option value="1h">Last 1h</option></select>
+          <div class="flex gap-3"><button id="sortNewest" class="p-3 rounded-xl bg-primary-green text-white hover:opacity-90 text-sm font-medium">Newest</button><button id="sortTrending" class="p-3 rounded-xl bg-card border border-[#333333] text-gray-300 hover:bg-[#282828] text-sm font-medium">Trending</button></div>
+        </div>
+      </div>
+      <div class="bg-card rounded-2xl shadow-2xl overflow-x-auto">
+        <div class="px-6 pt-6 flex flex-wrap gap-2 text-xs">
+          <span class="badge" style="background:#1f2a22;color:#7ee0a7;border-color:#294835">SOL chain</span>
+          <span id="badgeNew" class="badge hidden" style="background:#2a1f1f;color:#f29b9b;border-color:#4a2b2b">NEW &lt; 24h</span>
+        </div>
+        <table class="min-w-full divide-y divide-[#333333]" aria-describedby="listings-title">
+          <thead class="bg-[#282828]"><tr><th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">#</th><th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Coin / Creator</th><th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Price</th><th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Volume (24h)</th><th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Market Cap</th><th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">24h Change</th><th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Action</th></tr></thead>
+          <tbody id="tableBody" class="divide-y divide-[#333333] text-white"></tbody>
+        </table>
+        <div id="tableSkeleton" class="p-6 space-y-3"><div class="animate-pulse h-10 bg-[#2b2b2b] rounded"></div><div class="animate-pulse h-10 bg-[#2b2b2b] rounded"></div><div class="animate-pulse h-10 bg-[#2b2b2b] rounded"></div></div>
+      </div>
+      <div class="text-center mt-8"><button id="loadMoreBtn" class="text-primary-green font-medium hover:underline">Load More Listings →</button></div>
+    </section>
+    <section id="about" class="py-16">
+      <div class="bg-very-dark border border-[#2a2a2a] rounded-2xl p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center">
+        <div><h3 class="text-2xl md:text-3xl font-bold mb-3">About CoinSpot</h3><p class="text-gray-300 mb-4">CoinSpot is the discovery hub for the <span class="text-primary-green font-semibold">Believe</span> ecosystem. Track new creator coins, trends, and project movements — fast, clean, and mobile-first.</p><ul class="list-disc list-inside text-gray-300 space-y-1"><li>Live listings & trending insight</li><li>Creator-first profiles & links</li><li>Simple filters: time, volume, market cap</li></ul></div>
+        <div class="bg-card rounded-xl p-6 border border-[#333333]"><h4 class="font-semibold mb-2">Submit your Believe project</h4><p class="text-gray-400 mb-4">Send your token CA, creator handle, and links (X / Telegram). We’ll feature it after a quick review.</p><div class="flex gap-3"><a href="#" class="btn-primary bg-primary-green text-white px-5 py-2 rounded-lg font-semibold">Submit via Form</a><a href="#" class="bg-[#2b2b2b] hover:bg-[#343434] text-gray-200 px-5 py-2 rounded-lg font-semibold border border-[#3a3a3a]">Contact Team</a></div></div>
+      </div>
+    </section>
+  </main>
+  <footer class="bg-very-dark mt-16 py-8 border-t border-[#282828]"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm"><div class="mb-4 md:mb-0"><span class="text-lg font-bold text-white">CoinSpot</span> © <span id="year"></span>. All rights reserved.</div><div class="flex space-x-6 mb-4 md:mb-0"><a href="#" class="hover:text-primary-green">FAQ</a><a href="#" class="hover:text-primary-green">Privacy Policy</a><a href="#" class="hover:text-primary-green">Terms of Service</a></div><div class="flex space-x-4"><a href="#" aria-label="Twitter" class="hover:text-primary-green"><i data-lucide="twitter" class="w-5 h-5"></i></a><a href="#" aria-label="Telegram" class="hover:text-primary-green"><i data-lucide="send" class="w-5 h-5"></i></a></div></div></footer>
+  <script>
+    try { lucide.createIcons(); } catch {}
+    const mobileMenuBtn=document.getElementById('mobileMenuBtn'); const mobileMenu=document.getElementById('mobileMenu'); mobileMenuBtn?.addEventListener('click',()=>{const e=mobileMenuBtn.getAttribute('aria-expanded')==='true'; mobileMenuBtn.setAttribute('aria-expanded', String(!e)); mobileMenu.classList.toggle('hidden');});
+    document.getElementById('year').textContent=new Date().getFullYear();
+    const API_URL='https://api.dexscreener.com/latest/dex/pairs/solana';
+    async function fetchListings(){ const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),10000); try{ const res=await fetch(API_URL,{headers:{'accept':'application/json'}, signal:ctrl.signal, cache:'no-store'}); if(!res.ok) throw new Error('HTTP '+res.status+' '+res.statusText); const j=await res.json(); if(!j||!Array.isArray(j.pairs)) throw new Error('Unexpected API shape'); return j.pairs; } finally{ clearTimeout(to);} }
+    const fmtMoney=n=> (n>=1e9?`$${(n/1e9).toFixed(2)}B`: n>=1e6?`$${(n/1e6).toFixed(0)}M`:`$${Number(n||0).toLocaleString()}`);
+    const fmtPrice=p=> (p<0.01&&p>0?`$${p.toFixed(6)}`:`$${(p||0).toFixed(4)}`);
+    const pickEmoji=(t='')=>{t=t.toLowerCase(); if(t.includes('dog')||t.includes('wif')||t.includes('bonk')) return '🐕'; if(t.includes('cat')||t.includes('mew')) return '🐈'; if(t.includes('pepe')||t.includes('frog')) return '🐸'; if(t.includes('moon')) return '🌙'; return '🟩';};
+    const mapPairs=pairs=>pairs.map(p=>({name:p?.baseToken?.name||p?.baseToken?.symbol||'Unknown',ticker:p?.baseToken?.symbol||'',creator:p?.dexId?`@${p.dexId}`:'@Solana',price:+(p?.priceUsd||0),volume24h:+(p?.volume?.h24||0),mcap:+(p?.fdv||p?.marketCap||0),change24h:+(p?.priceChange?.h24||0),emoji:pickEmoji(p?.baseToken?.symbol||p?.baseToken?.name),createdAt:p?.pairCreatedAt||Date.now(),url:p?.url||'#',ca:p?.baseToken?.address||''}));
+    const debounce=(fn,d=300)=>{let t; return(...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),d)}};
+    function alertMessage(m,t='Message'){const c=document.createElement('div'); c.className='fixed inset-0 bg-black bg-opacity-70 z-[9999] flex items-center justify-center p-4'; c.setAttribute('role','dialog'); c.setAttribute('aria-modal','true'); c.innerHTML=`<div class="bg-card p-6 rounded-xl max-w-sm w-full shadow-2xl border-t-4 border-primary-green"><h3 class="text-xl font-bold text-white mb-3">${t}</h3><p class="text-gray-300 mb-4">${m}</p><button id="closeAlert" class="w-full bg-primary-green text-white py-2 rounded-lg font-semibold hover:opacity-90">Close</button></div>`; document.body.appendChild(c); document.getElementById('closeAlert').addEventListener('click',()=>c.remove()); setTimeout(()=>c.remove(),4000);}
+    function showStatus(msg,type='error',withRetry=true){const banner=document.getElementById('statusBanner'); const box=document.getElementById('statusBox'); const colors=type==='error'?['#402225','#762f34']:type==='info'?['#1c2430','#294159']:['#1f2a22','#294835']; box.className='mt-3 rounded-lg border px-4 py-3 text-sm flex items-start gap-3'; box.style.background=colors[0]; box.style.borderColor=colors[1]; box.innerHTML=`<div class="shrink-0">${type==='error'?'❌':type==='info'?'ℹ️':'✅'}</div><div class="grow">${msg}</div>${withRetry?'<button id="retryBtn" class="ml-2 px-3 py-1 rounded-md bg-primary-green text-black font-semibold">Retry</button>':''}`; banner.classList.remove('hidden'); if(withRetry){document.getElementById('retryBtn').onclick=()=>{banner.classList.add('hidden'); bootstrap();};}}
+    function renderTrending(list){const c=document.getElementById('trendingCards'); c.innerHTML=''; const top=[...list].filter(x=>x.mcap>0&&x.volume24h>1000).sort((a,b)=>b.change24h-a.change24h).slice(0,3); if(top.length===0){c.innerHTML='<div class="md:col-span-3 text-center py-10 text-gray-400 text-lg">No hot trends right now.</div>'} top.forEach(x=>{const up=x.change24h>=0; const cc=up?'text-primary-green':'text-red-500'; const card=document.createElement('div'); card.className='bg-card p-6 rounded-2xl shadow-xl border border-[#333333] hover:border-primary-green'; card.innerHTML=`<div class="flex items-center gap-4 mb-4"><span class="text-2xl" role="img" aria-label="Icon">${x.emoji}</span><div><p class="text-lg font-bold text-white">${x.name}</p><p class="text-sm text-gray-400">${x.ticker}</p></div></div><div class="flex justify-between items-end mb-4"><p class="text-4xl font-extrabold ${cc}">${fmtPrice(x.price)}</p><p class="text-xl font-semibold ${cc}">${x.change24h>0?'+':''}${x.change24h.toFixed(2)}% (24h)</p></div><div class="flex justify-between text-sm text-gray-400 mb-6"><span>MC: ${fmtMoney(x.mcap)}</span><span>Vol: ${fmtMoney(x.volume24h)}</span></div><a href="${x.url}" target="_blank" rel="noopener" class="w-full inline-block text-center btn-primary bg-primary-green text-white py-2 rounded-xl font-semibold">View Details</a>`; c.appendChild(card);}); document.getElementById('trendingSkeleton').classList.add('hidden'); c.classList.remove('hidden');}
+    function renderTable(list){const tb=document.getElementById('tableBody'); tb.innerHTML=''; if(list.length===0){tb.innerHTML='<tr><td colspan="7" class="text-center py-10 text-gray-400 text-lg">No listings match your filter.</td></tr>'} list.slice(0,50).forEach((x,i)=>{const up=x.change24h>=0; const cc=up?'text-primary-green':'text-red-500'; const isNew=(Date.now()-(x.createdAt||Date.now()))<86400000; const tr=document.createElement('tr'); tr.className='table-row-hover'; tr.innerHTML=`<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${i+1}</td><td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center"><span class="text-xl mr-3" role="img" aria-label="Icon">${x.emoji}</span><div><div class="text-sm font-medium">${x.name} (${x.ticker})</div><div class="text-xs text-gray-400">${x.creator}</div></div></div></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${fmtPrice(x.price)}</td><td class="px-6 py-4 whitespace-nowrap text-sm">${fmtMoney(x.volume24h)}</td><td class="px-6 py-4 whitespace-nowrap text-sm">${fmtMoney(x.mcap)} ${isNew?'<span class=\'ml-2 px-2 py-0.5 rounded-full text-[10px] bg-[#2a1f1f] text-[#f29b9b] border border-[#4a2b2b]\'>NEW</span>':''}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-semibold ${cc}">${x.change24h>0?'+':''}${x.change24h.toFixed(2)}%</td><td class="px-6 py-4 whitespace-nowrap text-sm"><div class="flex items-center gap-2"><a href="${x.url}" target="_blank" rel="noopener" class="bg-primary-green text-white px-3 py-1 rounded-lg text-xs font-medium hover:opacity-80">Believe</a><button class="px-2 py-1 text-xs bg-[#2b2b2b] border border-[#3a3a3a] rounded-lg text-gray-200 hover:bg-[#343434]">Copy CA</button></div></td>`; const btn=tr.querySelector('button'); btn.onclick=()=>{const ca=x.ca||''; if(!navigator.clipboard||location.protocol!=='https:'){const ta=document.createElement('textarea'); ta.value=ca; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();} else {navigator.clipboard.writeText(ca);} alertMessage('Contract copied to clipboard');}; tb.appendChild(tr);}); document.getElementById('tableSkeleton').classList.add('hidden');}
+    let all=[], current=[]; function applySearchAndFilters(){const q=document.getElementById('searchInput').value.toLowerCase(); const time=document.getElementById('timeSelect').value; const now=Date.now(); const cutoffMap={'24h':24,'12h':12,'6h':6,'1h':1}; const hours=cutoffMap[time]??24; const cutoff=now-hours*3600*1000; current=all.filter(c=>(`${c.name} ${c.ticker} ${c.creator}`).toLowerCase().includes(q)&&(c.createdAt||now)>=cutoff); renderTable(current);}
+    document.getElementById('sortNewest').addEventListener('click',()=>{all.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)); renderTrending([...all].sort((a,b)=>b.change24h-a.change24h)); applySearchAndFilters();});
+    document.getElementById('sortTrending').addEventListener('click',()=>{all.sort((a,b)=>Math.abs(b.change24h)-Math.abs(a.change24h)); renderTrending(all); applySearchAndFilters();});
+    document.getElementById('searchInput').addEventListener('input',debounce(applySearchAndFilters,250)); document.getElementById('timeSelect').addEventListener('change',applySearchAndFilters);
+    async function bootstrap(){document.getElementById('trendingSkeleton').classList.remove('hidden'); document.getElementById('tableSkeleton').classList.remove('hidden'); try{ const pairs=await fetchListings(); all=mapPairs(pairs).filter(c=>c.price>0); all.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)); renderTrending([...all].sort((a,b)=>b.change24h-a.change24h)); applySearchAndFilters(); showStatus('Live data loaded successfully.','success',false);} catch(e){ console.error(e); showStatus('Network/API issue. Showing sample data.','error',true); all=[{name:'Bonk',ticker:'BONK',creator:'@SolanaDog',price:0.000021,volume24h:299_000_000,mcap:1_620_000_000,change24h:7.0,emoji:'🐕',createdAt:Date.now()-1_800_000,url:'#',ca:'CA1234'}]; renderTrending(all); applySearchAndFilters();} finally{ document.getElementById('trendingSkeleton').classList.add('hidden'); document.getElementById('tableSkeleton').classList.add('hidden'); } } bootstrap();
+  </script>
+</body>
+</html>
