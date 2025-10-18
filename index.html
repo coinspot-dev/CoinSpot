@@ -1,574 +1,299 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoinSpot | Believe Ecosystem Tracker</title>
-    <!-- Load Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; /* Light track */
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #10b981; /* Emerald 500 - Believe Green */
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #059669;
-        }
-
-        /* Styling for the animated trade feed */
-        .trade-item {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ANIMATION: Card Hover Effect (Custom Class) */
-        .card-animate {
-            transition: all 0.3s ease;
-        }
-        .card-animate:hover {
-            transform: translateY(-4px) scale(1.01);
-            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2), 0 4px 6px -2px rgba(16, 185, 129, 0.05); /* Green Shadow */
-        }
-
-        /* NEW CSS: Logo Spin Animation Dihapus */
-        /* @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .logo-spin {
-            animation: spin 10s linear infinite;
-        } */
-
-        /* Custom Modal Styling */
-        .modal {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CoinSpot | Believe Ecosystem Tracker</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/coinspot-icon.png" />
+  <link rel="apple-touch-icon" href="./assets/coinspot-icon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    ::-webkit-scrollbar{width:8px}
+    ::-webkit-scrollbar-track{background:#f1f1f1}
+    ::-webkit-scrollbar-thumb{background:#10b981;border-radius:4px}
+    ::-webkit-scrollbar-thumb:hover{background:#059669}
+    .trade-item{animation:fadeIn .5s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .card-animate{transition:all .2s ease}
+    .card-animate:hover{transform:translateY(-3px);box-shadow:0 10px 15px -3px rgba(16,185,129,.18),0 4px 6px -2px rgba(16,185,129,.06)}
+    .modal{transition:opacity .25s ease, transform .25s ease}
+    .active-tab{border-bottom-width:2px}
+    .click-zfix{position:relative;z-index:10}
+  </style>
 </head>
-<!-- Background body tetap abu-abu terang, konten utama akan menjadi hijau -->
 <body class="bg-gray-50 font-sans min-h-screen">
-
-    <!-- MODAL POPUP (NEW FEATURE) -->
-    <div id="buy-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 opacity-0 pointer-events-none">
-        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full transform -translate-y-5 transition-transform duration-300">
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">Confirm Purchase</h3>
-            <p class="text-gray-700 mb-6">You are attempting to perform a trade action for <span id="modal-coin-name" class="font-bold text-emerald-600"></span>. </p>
-            <p class="text-sm text-gray-500 mb-6">In a live application, clicking this button would typically redirect you to the Believe App's trading interface to execute the buy order.</p>
-            
-            <div class="flex justify-end space-x-4">
-                <button onclick="closeModal()" class="px-6 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition duration-150">Close</button>
-                <button onclick="handleBuyRedirect()" class="px-6 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition duration-150 shadow-md">Go to Trading</button>
-            </div>
-        </div>
+  <div id="buy-modal" class="modal fixed inset-0 bg-gray-900/75 flex items-center justify-center z-50 opacity-0 pointer-events-none">
+    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl max-w-lg w-full transform -translate-y-4">
+      <h3 class="text-2xl font-bold text-gray-900 mb-3">Confirm Purchase</h3>
+      <p class="text-gray-700 mb-5">
+        You’re about to open trading for <span id="modal-coin-name" class="font-semibold text-emerald-600"></span>.
+      </p>
+      <p class="text-xs text-gray-500 mb-6">In production, this should deep-link to Believe App’s trading interface.</p>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Close</button>
+        <button type="button" onclick="handleBuyRedirect()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow">Go to Trading</button>
+      </div>
     </div>
-    <!-- END MODAL POPUP -->
+  </div>
 
+  <header class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2">
+        <img src="./assets/coinspot-icon.png" alt="CoinSpot" class="w-9 h-9 rounded-lg" />
+        <span class="text-2xl font-extrabold text-gray-900">CoinSpot</span>
+      </a>
+      <nav class="click-zfix flex items-center gap-1 sm:gap-4">
+        <button class="nav-tab active-tab border-emerald-600 text-emerald-600 px-3 py-2 text-sm font-medium" data-tab="dashboard" type="button">Dashboard</button>
+        <button class="nav-tab border-transparent text-gray-500 hover:text-emerald-600 px-3 py-2 text-sm font-medium" data-tab="new-coins" type="button">New Coins</button>
+        <button class="nav-tab border-transparent text-gray-500 hover:text-emerald-600 px-3 py-2 text-sm font-medium" data-tab="last-trades" type="button">Last Trades</button>
+      </nav>
+    </div>
+  </header>
 
-    <!-- Header & Navigation -->
-    <header class="bg-white shadow-md sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                
-                <!-- Logo and Title -->
-                <div class="flex items-center space-x-2">
-                    <!-- LOGO HIJAU (CoinSpot Icon) -->
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAADmBMlBAAAABHNCS... " onerror="this.src='https://placehold.co/36x36/10b981/ffffff?text=CS'" alt="CoinSpot Logo" class="w-9 h-9 rounded-full border border-gray-200"/>
-                    <span class="text-2xl font-extrabold text-gray-900">CoinSpot</span>
-                </div>
-
-                <!-- Tabs/Navigation -->
-                <nav class="flex space-x-1 sm:space-x-4">
-                    <button class="nav-tab text-sm sm:text-base font-medium text-gray-500 hover:text-emerald-600 px-3 py-2 border-b-2 border-transparent transition duration-150 ease-in-out active-tab" data-tab="dashboard">Dashboard</button>
-                    <button class="nav-tab text-sm sm:text-base font-medium text-gray-500 hover:text-emerald-600 px-3 py-2 border-b-2 border-transparent transition duration-150 ease-in-out" data-tab="new-coins">New Coins</button>
-                    <button class="nav-tab text-sm sm:text-base font-medium text-gray-500 hover:text-emerald-600 px-3 py-2 border-b-2 border-transparent transition duration-150 ease-in-out" data-tab="last-trades">Last Trades</button>
-                </nav>
-
-                <!-- Action Button Placeholder -->
-                <div class="hidden sm:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg">
-                    <!-- Placeholder untuk menjaga keseimbangan layout -->
-                </div>
-            </div>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-gray-900 bg-gradient-to-br from-emerald-50 to-green-100 rounded-xl shadow-inner">
+    <section id="dashboard" class="tab-content">
+      <div class="flex items-center gap-3 mb-6">
+        <h1 class="text-3xl font-bold">Believe Ecosystem Dashboard</h1>
+        <img src="./assets/believe-logo.png" alt="Believe" class="w-8 h-8 rounded-full ring-1 ring-emerald-200" />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <div class="bg-white rounded-xl shadow p-6 card-animate">
+          <p class="text-sm text-gray-500">Ecosystem Market Cap</p>
+          <p id="market-cap" class="text-3xl font-bold mt-1">$0</p>
+          <p id="market-cap-change" class="text-xs text-green-600 mt-2">+0.0% (24H)</p>
         </div>
-    </header>
-
-    <!-- Main Content Area -->
-    <!-- PERUBAHAN UTAMA: Mengubah background main menjadi gradien hijau lembut -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-gray-900 bg-gradient-to-br from-emerald-50 to-green-100 rounded-xl shadow-inner">
-
-        <!-- Dashboard Tab Content -->
-        <div id="dashboard" class="tab-content">
-            
-            <!-- JUDUL DENGAN LOGO BELIEVE -->
-            <div class="flex items-center space-x-3 mb-6">
-                <h1 class="text-3xl font-bold">Believe Ecosystem Dashboard</h1>
-                <!-- LOGO BELIEVE MELINGKAR (35487.png) - HAPUS logo-spin -->
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAADmBMlBAAAABHNCS... " onerror="this.src='https://placehold.co/32x32/10b981/ffffff?text=B'" alt="Believe Logo" class="w-8 h-8 rounded-full"/>
-            </div>
-            
-            <!-- Market Snapshot Cards -->
-            <!-- Perubahan 3: Tambahkan class card-animate untuk efek hover -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                
-                <div class="bg-white rounded-xl shadow-lg p-6 card-animate">
-                    <p class="text-sm font-medium text-gray-500">Ecosystem Market Cap</p>
-                    <p id="market-cap" class="text-3xl font-bold text-gray-900 mt-1">$45.5M</p>
-                    <p class="text-xs text-green-600 mt-2 flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                        +8.2% (24H)
-                    </p>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 card-animate">
-                    <p class="text-sm font-medium text-gray-500">24H Volume</p>
-                    <p id="volume" class="text-3xl font-bold text-gray-900 mt-1">$12.3M</p>
-                    <p class="text-xs text-green-600 mt-2 flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                        +15.5% (24H)
-                    </p>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 card-animate">
-                    <p class="text-sm font-medium text-gray-500">Total Coins Launched</p>
-                    <p id="total-coins" class="text-3xl font-bold text-gray-900 mt-1">2,489</p>
-                    <p class="text-xs text-gray-500 mt-2">
-                        +45 Today
-                    </p>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 card-animate">
-                    <p class="text-sm font-medium text-gray-500">BELIEVE Price</p>
-                    <p id="launchcoin-price" class="text-3xl font-bold text-gray-900 mt-1">$0.0734</p>
-                    <p class="text-xs text-red-600 mt-2 flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 112 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                        -5.1% (24H)
-                    </p>
-                </div>
-            </div>
-
-            <!-- Trending Coins Table -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-10">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Trending Coins (24H)</h2>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coin Name</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price (USD)</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">24H Change</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">24H Volume</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Market Cap</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="trending-coins-body" class="bg-white divide-y divide-gray-200">
-                            <!-- Data will be inserted here by JavaScript -->
-                            <tr class="text-center"><td colspan="7" class="py-4 text-gray-500">Loading data or API failure... (Showing simulated data now)</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Last Trades Preview (Mobile/Condensed) -->
-            <div class="bg-white rounded-xl shadow-lg p-6 md:hidden">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Recent Trades</h2>
-                <div class="h-64 overflow-y-scroll" id="last-trades-mobile">
-                    <!-- Data will be inserted here by JavaScript -->
-                    <p class="text-gray-400 text-center py-10">Loading real-time trade data...</p>
-                </div>
-            </div>
-
-        </div> <!-- End Dashboard -->
-
-        <!-- New Coins Tab Content -->
-        <div id="new-coins" class="tab-content hidden">
-            <h1 class="text-3xl font-bold text-gray-900">New Coin Launches</h1>
-            <p class="text-gray-600 mb-8">Tracking the newest tokens minted on the Believe platform, evaluated by social popularity and initial liquidity.</p>
-            
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Latest Launches (Last 7 Days)</h2>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Current Price</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">24H Volume</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Market Cap</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Launch Date</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <!-- Simulated New Coin Data -->
-                            <!-- Tambahkan efek hover di sini juga -->
-                            <tr class="hover:bg-gray-50 transition duration-150 card-animate">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AlphaGen</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-green-600 font-semibold">$0.00035</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">$185K</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">$450K</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">10 mins ago</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50 transition duration-150 card-animate">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">SolStack</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 text-right font-semibold">$0.0049</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">$92K</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">$850K</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">2 hours ago</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50 transition duration-150 card-animate">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MemeBlast</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 text-right font-semibold">$0.000015</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">$210K</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">$3.1M</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">1 day ago</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div> <!-- End New Coins -->
-
-        <!-- Last Trades Tab Content -->
-        <div id="last-trades" class="tab-content hidden">
-            <h1 class="text-3xl font-bold text-gray-900 mb-6">Real-Time Trades Feed</h1>
-            <p class="text-gray-600 mb-8">View the live stream of buy and sell transactions across the entire Believe ecosystem.</p>
-            
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="h-[70vh] overflow-y-scroll" id="last-trades-body">
-                    <!-- Trades will be dynamically inserted here -->
-                    <p class="text-gray-400 text-center py-10">Loading real-time trade data...</p>
-                </div>
-            </div>
-        </div> <!-- End Last Trades -->
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 mt-10">
-        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
-            <!-- Container untuk Sosial Media dan Hak Cipta -->
-            <div class="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                
-                <!-- Icon X/Twitter (Social Media) -->
-                <a href="#" class="text-gray-400 hover:text-emerald-400 transition duration-150" aria-label="CoinSpot X Account">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M18.901 1.153h3.68l-8.042 9.176L24 22.846h-7.614l-6.195-7.018L4.764 1.153h-3.68l8.4 9.617L0 22.846h8.043l5.524-6.312L18.901 1.153zm-2.028 1.84h-.478L7.218 21.053h.478l9.136-17.901z" />
-                    </svg>
-                </a>
-                
-                <!-- Teks Hak Cipta -->
-                <p class="text-sm text-gray-400">&copy; 2025 CoinSpot by Believe App. All rights reserved.</p>
-            </div>
-
-            <!-- Disclaimer -->
-            <p class="mt-2 text-xs text-gray-500">Disclaimer: Data is simulated for demonstration purposes. Cryptocurrency trading involves high risks.</p>
+        <div class="bg-white rounded-xl shadow p-6 card-animate">
+          <p class="text-sm text-gray-500">24H Volume</p>
+          <p id="volume" class="text-3xl font-bold mt-1">$0</p>
+          <p class="text-xs text-green-600 mt-2">+0.0% (24H)</p>
         </div>
-    </footer>
+        <div class="bg-white rounded-xl shadow p-6 card-animate">
+          <p class="text-sm text-gray-500">Total Coins Launched</p>
+          <p id="total-coins" class="text-3xl font-bold mt-1">—</p>
+          <p class="text-xs text-gray-500 mt-2">+ Today</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 card-animate">
+          <p class="text-sm text-gray-500">BELIEVE Price</p>
+          <p id="launchcoin-price" class="text-3xl font-bold mt-1">$0.0000</p>
+          <p id="launchcoin-change" class="text-xs text-red-600 mt-2">0.0% (24H)</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6 mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-2xl font-bold">Trending Coins (24H)</h2>
+          <div class="flex gap-2">
+            <button id="btnSortChange" type="button" class="px-3 py-1.5 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Sort by Change</button>
+            <button id="btnSortVol" type="button" class="px-3 py-1.5 text-xs bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">Sort by Volume</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Coin</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">24H Change</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">24H Volume</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Market Cap</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Action</th>
+              </tr>
+            </thead>
+            <tbody id="trending-coins-body" class="bg-white divide-y divide-gray-200">
+              <tr class="text-center"><td colspan="7" class="py-4 text-gray-500">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6 md:hidden">
+        <h2 class="text-2xl font-bold mb-4">Recent Trades</h2>
+        <div id="last-trades-mobile" class="h-64 overflow-y-auto">
+          <p class="text-gray-400 text-center py-10">Loading…</p>
+        </div>
+      </div>
+    </section>
 
-    <script>
-        // Modal functions
-        function openModal(coinName) {
-            const modal = document.getElementById('buy-modal');
-            document.getElementById('modal-coin-name').textContent = coinName;
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.querySelector('div').classList.remove('-translate-y-5');
+    <section id="new-coins" class="tab-content hidden">
+      <h1 class="text-3xl font-bold mb-2">New Coin Launches</h1>
+      <p class="text-gray-600 mb-6">Newest tokens minted on the Believe platform.</p>
+      <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-xl font-semibold mb-4">Latest Launches (Last 7 Days)</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Token</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">24H Volume</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Market Cap</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Launch</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr class="hover:bg-gray-50 transition card-animate">
+                <td class="px-6 py-4 text-sm font-medium">AlphaGen</td>
+                <td class="px-6 py-4 text-sm text-green-600 text-right font-semibold">$0.00035</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">$185K</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">$450K</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">10 mins ago</td>
+              </tr>
+              <tr class="hover:bg-gray-50 transition card-animate">
+                <td class="px-6 py-4 text-sm font-medium">SolStack</td>
+                <td class="px-6 py-4 text-sm text-red-600 text-right font-semibold">$0.0049</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">$92K</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">$850K</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">2 hours ago</td>
+              </tr>
+              <tr class="hover:bg-gray-50 transition card-animate">
+                <td class="px-6 py-4 text-sm font-medium">MemeBlast</td>
+                <td class="px-6 py-4 text-sm text-green-600 text-right font-semibold">$0.000015</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">$3.1M</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">$3.1M</td>
+                <td class="px-6 py-4 text-sm text-right text-gray-500">1 day ago</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="last-trades" class="tab-content hidden">
+      <h1 class="text-3xl font-bold mb-6">Real-Time Trades Feed</h1>
+      <p class="text-gray-600 mb-6">Live stream of buy/sell transactions across the Believe ecosystem.</p>
+      <div class="bg-white rounded-xl shadow p-6">
+        <div id="last-trades-body" class="h-[70vh] overflow-y-auto">
+          <p class="text-gray-400 text-center py-10">Loading…</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-gray-800 mt-10">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="#" class="text-gray-400 hover:text-emerald-400" aria-label="CoinSpot on X">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 1.15h3.68l-8.04 9.18L24 22.85h-7.61l-6.2-7.02L4.76 1.15H1.08l8.4 9.62L0 22.85h8.04l5.52-6.31L18.9 1.15zM16.87 2.99h-.48L7.22 21.05h.48L16.87 3z"/></svg>
+        </a>
+        <p class="text-sm text-gray-400">© 2025 CoinSpot by Believe App. All rights reserved.</p>
+      </div>
+      <p class="mt-2 text-xs text-gray-500">Disclaimer: Data is simulated for demonstration. Crypto trading is high risk.</p>
+    </div>
+  </footer>
+
+  <script>
+    function openModal(name){document.getElementById('modal-coin-name').textContent=name;const m=document.getElementById('buy-modal');m.classList.remove('opacity-0','pointer-events-none');m.querySelector('div').classList.remove('-translate-y-4')}
+    function closeModal(){const m=document.getElementById('buy-modal');m.classList.add('opacity-0','pointer-events-none');m.querySelector('div').classList.add('-translate-y-4')}
+    function handleBuyRedirect(){console.log('Deep-link trading for',document.getElementById('modal-coin-name').textContent);closeModal()}
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const trendingBody=document.getElementById('trending-coins-body');
+      const lastTradesBody=document.getElementById('last-trades-body');
+      const lastTradesMobile=document.getElementById('last-trades-mobile');
+      const navTabs=document.querySelectorAll('.nav-tab');
+      const tabContents=document.querySelectorAll('.tab-content');
+
+      const FALLBACK_COINS=[
+        {name:'Social Fi',symbol:'BEL',price:0.154,change:154,volume:1200000,cap:5300000},
+        {name:'LaunchPad Meme',symbol:'LPM',price:0.00019,change:78,volume:850000,cap:1900000},
+        {name:'Solana Pump',symbol:'SLP',price:0.00115,change:-12,volume:600000,cap:4100000},
+        {name:'Creator Fund',symbol:'CRF',price:0.0089,change:45,volume:450000,cap:3200000},
+        {name:'Tweet Token',symbol:'TWT',price:0.051,change:8,volume:300000,cap:2500000},
+        {name:'Meteora Link',symbol:'MTL',price:0.78,change:-2.5,volume:210000,cap:1800000},
+        {name:'Community Vibe',symbol:'CVB',price:0.0003,change:10.5,volume:150000,cap:900000},
+      ];
+      let CURRENT_COINS=[...FALLBACK_COINS];
+      let tradeQueue=[]; const MAX_TRADES=50;
+
+      const fmtN=(n)=>new Intl.NumberFormat('en-US',{maximumFractionDigits:4}).format(n);
+      const fmtC=(n)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:6}).format(n);
+      const fmtCompact=(n)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',notation:'compact',minimumFractionDigits:0,maximumFractionDigits:2}).format(n);
+
+      function renderTrending(coins){
+        coins.sort((a,b)=>b.change-a.change);
+        if(!coins.length){trendingBody.innerHTML='<tr><td colspan="7" class="py-8 text-center text-gray-500">No data</td></tr>';return;}
+        trendingBody.innerHTML=coins.map((c,i)=>{
+          const color=c.change>=0?'text-green-600':'text-red-600'; const sign=c.change>=0?'+':'';
+          return `<tr class="hover:bg-gray-50 transition cursor-pointer card-animate">
+            <td class="px-6 py-4 text-sm">${i+1}</td>
+            <td class="px-6 py-4 text-sm font-medium text-emerald-600">${c.name} <span class="text-xs text-gray-400">(${c.symbol})</span></td>
+            <td class="px-6 py-4 text-sm text-right">${fmtC(c.price)}</td>
+            <td class="px-6 py-4 text-sm text-right ${color} font-semibold">${sign}${fmtN(c.change)}%</td>
+            <td class="px-6 py-4 text-sm text-right text-gray-600">${fmtCompact(c.volume)}</td>
+            <td class="px-6 py-4 text-sm text-right text-gray-600 hidden sm:table-cell">${fmtCompact(c.cap)}</td>
+            <td class="px-6 py-4 text-center"><button type="button" class="px-3 py-1 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-700" onclick="openModal('${c.name}')">BELIEVE</button></td>
+          </tr>`;
+        }).join('');
+        const cap=coins.reduce((s,c)=>s+c.cap,0);
+        const vol=coins.reduce((s,c)=>s+c.volume,0);
+        document.getElementById('market-cap').textContent=fmtCompact(cap);
+        document.getElementById('volume').textContent=fmtCompact(vol);
+        document.getElementById('total-coins').textContent=(coins.length*357).toLocaleString();
+        const bel=coins.find(c=>c.symbol==='BEL');
+        if(bel){
+          document.getElementById('launchcoin-price').textContent=fmtC(bel.price);
+          const changeEl=document.getElementById('launchcoin-change');
+          changeEl.textContent=`${bel.change>=0?'+':''}${fmtN(bel.change)}% (24H)`;
+          changeEl.className=`text-xs ${bel.change>=0?'text-green-600':'text-red-600'} mt-2`;
         }
+      }
 
-        function closeModal() {
-            const modal = document.getElementById('buy-modal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.querySelector('div').classList.add('-translate-y-5');
+      function generateTradeFallback(){
+        const c=CURRENT_COINS[Math.floor(Math.random()*CURRENT_COINS.length)];
+        const type=Math.random()>0.5?'Buy':'Sell';
+        const usd=Math.floor(Math.random()*5000)+10;
+        const tokens=usd/(c.price||0.01);
+        const tx='0x'+(Math.random()*0xFFFFFFFFFFFFF).toString(16).slice(0,10)+'...';
+        return {coinSymbol:c.symbol,type,tokenAmount:tokens,amountUSD:usd,time:'Just now',tx};
+      }
+
+      function renderTrades(){
+        if(!tradeQueue.length){
+          lastTradesBody.innerHTML='<p class="text-gray-400 text-center py-10">No recent trades.</p>';
+          if(lastTradesMobile) lastTradesMobile.innerHTML='<p class="text-gray-400 text-center py-10">No recent trades.</p>';
+          return;
         }
-
-        function handleBuyRedirect() {
-            // In a real application, this would redirect to a trading page
-            console.log(`Redirecting to Believe App trading interface for ${document.getElementById('modal-coin-name').textContent}...`);
-            closeModal();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const trendingBody = document.getElementById('trending-coins-body');
-            const lastTradesBody = document.getElementById('last-trades-body');
-            const lastTradesMobile = document.getElementById('last-trades-mobile');
-            const navTabs = document.querySelectorAll('.nav-tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            // --- API Endpoints dan Fallback Data ---
-            // GANTI DENGAN ENDPOINT API BELIEVE APP YANG SEBENARNYA!
-            const API_TRENDING_URL = 'https://api.believe.app/v1/trending-coins';
-            const API_TRADES_URL = 'https://api.believe.app/v1/last-trades'; // Untuk Live Feed
-            
-            const FALLBACK_COINS = [
-                { name: 'Social Fi', symbol: 'BEL', price: 0.154, change: 154, volume: 1200000, cap: 5300000 },
-                { name: 'LaunchPad Meme', symbol: 'LPM', price: 0.00019, change: 78, volume: 850000, cap: 1900000 },
-                { name: 'Solana Pump', symbol: 'SLP', price: 0.00115, change: -12, volume: 600000, cap: 4100000 },
-                { name: 'Creator Fund', symbol: 'CRF', price: 0.0089, change: 45, volume: 450000, cap: 3200000 },
-                { name: 'Tweet Token', symbol: 'TWT', price: 0.051, change: 8, volume: 300000, cap: 2500000 },
-                { name: 'Meteora Link', symbol: 'MTL', price: 0.78, change: -2.5, volume: 210000, cap: 1800000 },
-                { name: 'Community Vibe', symbol: 'CVB', price: 0.0003, change: 10.5, volume: 150000, cap: 900000 },
-            ];
-            let CURRENT_COINS = FALLBACK_COINS; // Gunakan fallback hingga API dimuat
-
-            // --- Utility Functions ---
-
-            function formatNumber(num) {
-                return new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 }).format(num);
-            }
-            
-            function formatCompactNumber(num) {
-                if (num === null) return 'N/A';
-                const formatter = new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    notation: 'compact',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2
-                });
-                return formatter.format(num);
-            }
-
-            function formatCurrency(num) {
-                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 6 }).format(num);
-            }
-
-            // --- Data Fetching (API INTEGRATION) ---
-
-            async function fetchTrendingCoins() {
-                try {
-                    // PANGGILAN API UNTUK TRENDING COINS
-                    // Catatan: Jika API memerlukan API Key atau header tertentu, tambahkan di sini.
-                    const response = await fetch(API_TRENDING_URL);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    
-                    // Asumsikan data adalah array koin yang benar
-                    CURRENT_COINS = data; 
-                    console.log("Trending coins data fetched successfully.");
-                    
-                } catch (error) {
-                    console.error("Error fetching trending coins from API. Using fallback data.", error);
-                    CURRENT_COINS = FALLBACK_COINS;
-                } finally {
-                    generateTrendingCoins(CURRENT_COINS);
-                    updateMarketSnapshot(CURRENT_COINS);
-                }
-            }
-            
-            function generateTrendingCoins(coins) {
-                coins.sort((a, b) => b.change - a.change); // Sort by change
-                
-                let html = '';
-                if (coins.length === 0) {
-                    trendingBody.innerHTML = `<tr class="text-center"><td colspan="7" class="py-8 text-gray-500">No trending coins found.</td></tr>`;
-                    return;
-                }
-
-                coins.forEach((coin, index) => {
-                    const changeColor = coin.change >= 0 ? 'text-green-600' : 'text-red-600';
-                    const sign = coin.change >= 0 ? '+' : '';
-                    
-                    html += `
-                        <tr class="hover:bg-gray-50 transition duration-150 cursor-pointer card-animate">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${index + 1}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-emerald-600">${coin.name} <span class="text-xs text-gray-400">(${coin.symbol})</span></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">${formatCurrency(coin.price)}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-right ${changeColor} font-semibold">${sign}${formatNumber(coin.change)}%</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">${formatCompactNumber(coin.volume)}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500 hidden sm:table-cell">${formatCompactNumber(coin.cap)}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button onclick="openModal('${coin.name}')" class="px-3 py-1 text-xs bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition duration-150 transform hover:scale-105 shadow-md">BELIEVE</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                trendingBody.innerHTML = html;
-            }
-
-            function updateMarketSnapshot(coins) {
-                if (coins.length === 0) return;
-
-                const totalMarketCap = coins.reduce((sum, coin) => sum + coin.cap, 0);
-                const totalVolume = coins.reduce((sum, coin) => sum + coin.volume, 0);
-                const avgChange = coins.reduce((sum, coin) => sum + coin.change, 0) / coins.length;
-
-                // Update Market Cap Card (Simulasi)
-                document.getElementById('market-cap').textContent = formatCompactNumber(totalMarketCap);
-                
-                // Update Volume Card (Simulasi)
-                document.getElementById('volume').textContent = formatCompactNumber(totalVolume);
-
-                // Update BELIEVE Price (ambil harga dari koin BEL)
-                const believeCoin = coins.find(c => c.symbol === 'BEL');
-                if (believeCoin) {
-                    document.getElementById('launchcoin-price').textContent = formatCurrency(believeCoin.price);
-                    // Perbarui indikator change (hanya data text, panah diabaikan untuk kesederhanaan)
-                    const changeText = document.querySelector('#launchcoin-price').nextElementSibling;
-                    if (changeText) {
-                        const changeColor = believeCoin.change >= 0 ? 'text-green-600' : 'text-red-600';
-                        const sign = believeCoin.change >= 0 ? '+' : '';
-                        changeText.className = `text-xs ${changeColor} mt-2 flex items-center`;
-                        // Anggap SVG panah tetap ada dan hanya teks yang diperbarui
-                        changeText.lastChild.textContent = `${sign}${formatNumber(believeCoin.change)}% (24H)`; 
-                    }
-                }
-            }
-
-
-            // --- Live Trades Polling ---
-
-            let tradeQueue = [];
-            const MAX_TRADES = 50;
-
-            // Fungsi Simulasi Trade (Fallback jika API Trade gagal)
-            function generateTradeFallback() {
-                const coin = CURRENT_COINS[Math.floor(Math.random() * CURRENT_COINS.length)];
-                const type = Math.random() > 0.5 ? 'Buy' : 'Sell';
-                const amountUSD = Math.floor(Math.random() * 5000) + 10;
-                const tokenAmount = amountUSD / coin.price;
-                const txHash = '0x' + (Math.random() * 0xFFFFFFFFFFFFFF).toString(16).slice(0, 10) + '...';
-                
-                return {
-                    coinSymbol: coin.symbol,
-                    type,
-                    tokenAmount: tokenAmount,
-                    amountUSD: amountUSD,
-                    txHash: txHash,
-                    time: 'Just now'
-                };
-            }
-
-            async function fetchLastTrades() {
-                try {
-                    // PANGGILAN API UNTUK LIVE TRADES
-                    const response = await fetch(API_TRADES_URL); 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const newTrades = await response.json(); 
-                    
-                    // Asumsikan respons adalah array trade terbaru
-                    tradeQueue.unshift(...newTrades);
-                    console.log(`Fetched ${newTrades.length} new trades.`);
-
-                } catch (error) {
-                    // Jika API gagal, gunakan simulasi 
-                    console.error("Error fetching live trades from API. Generating fallback trade.", error);
-                    const newTrade = generateTradeFallback();
-                    tradeQueue.unshift(newTrade);
-                }
-                
-                // Batasi antrian trade
-                tradeQueue = tradeQueue.slice(0, MAX_TRADES);
-                renderLastTrades();
-            }
-
-            function renderLastTrades() {
-                if (tradeQueue.length === 0) {
-                    lastTradesBody.innerHTML = `<p class="text-gray-400 text-center py-10">No recent trades.</p>`;
-                    lastTradesMobile.innerHTML = `<p class="text-gray-400 text-center py-10">No recent trades.</p>`;
-                    return;
-                }
-
-                // Header untuk Desktop View
-                let desktopHtml = `
-                    <div class="grid grid-cols-6 gap-4 p-3 font-semibold text-gray-700 border-b border-gray-200">
-                        <div class="col-span-1 text-sm">Time</div>
-                        <div class="col-span-1 text-sm">Coin</div>
-                        <div class="col-span-1 text-center text-sm">Type</div>
-                        <div class="col-span-1 text-right text-sm">Token Amount</div>
-                        <div class="col-span-1 text-right text-sm">USD Amount</div>
-                        <div class="col-span-1 text-right text-sm">Tx Hash</div>
-                    </div>
-                `;
-                let mobileHtml = '';
-                
-                tradeQueue.forEach(trade => {
-                    const typeColor = trade.type === 'Buy' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
-
-                    // Desktop View
-                    desktopHtml += `
-                        <div class="trade-item grid grid-cols-6 gap-4 p-3 hover:bg-gray-50 transition duration-100 border-b border-gray-100">
-                            <div class="col-span-1 text-sm text-gray-500">${trade.time}</div>
-                            <div class="col-span-1 text-sm font-semibold text-gray-900">${trade.coinSymbol}</div>
-                            <div class="col-span-1 text-center">
-                                <span class="px-3 py-1 rounded-full text-xs font-medium ${typeColor}">${trade.type}</span>
-                            </div>
-                            <div class="col-span-1 text-right text-sm text-gray-900">${formatNumber(trade.tokenAmount)}</div>
-                            <div class="col-span-1 text-right text-sm font-bold text-gray-900">${formatCurrency(trade.amountUSD)}</div>
-                            <div class="col-span-1 text-right text-sm text-emerald-600 truncate">
-                                <a href="#" title="View on Explorer">${trade.txHash.slice(0, 10)}...</a>
-                            </div>
-                        </div>
-                    `;
-
-                    // Mobile View
-                    mobileHtml += `
-                        <div class="trade-item p-3 border-b border-gray-100 flex justify-between items-center">
-                            <div>
-                                <span class="font-semibold text-gray-900">${trade.coinSymbol}</span>
-                                <span class="ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${typeColor}">${trade.type}</span>
-                                <p class="text-xs text-gray-500 mt-1">${formatNumber(trade.tokenAmount)} tokens</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-bold text-sm">${formatCurrency(trade.amountUSD)}</p>
-                                <p class="text-xs text-gray-400">${trade.time}</p>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                lastTradesBody.innerHTML = desktopHtml;
-                lastTradesMobile.innerHTML = mobileHtml;
-            }
-
-            // --- Initialize and Run ---
-            
-            // 1. Ambil data trending saat inisialisasi
-            fetchTrendingCoins(); 
-
-            // 2. Ambil data trade awal dan set interval untuk polling
-            fetchLastTrades();
-            // Polling setiap 3 detik untuk mendapatkan trade terbaru (Ganti sesuai kebutuhan API)
-            setInterval(fetchLastTrades, 3000); 
-
-
-            // --- Tab Switching Logic --- (Tetap)
-            navTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const targetTab = tab.getAttribute('data-tab');
-                    
-                    // Update active tab style
-                    navTabs.forEach(t => t.classList.remove('active-tab', 'border-emerald-600', 'text-emerald-600'));
-                    navTabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
-                    tab.classList.add('active-tab', 'border-emerald-600', 'text-emerald-600');
-                    
-                    // Switch content
-                    tabContents.forEach(content => {
-                        if (content.id === targetTab) {
-                            content.classList.remove('hidden');
-                        } else {
-                            content.classList.add('hidden');
-                        }
-                    });
-                });
-            });
-
-            // Set initial active tab style
-            document.querySelector('.active-tab').classList.add('border-emerald-600', 'text-emerald-600');
-
+        let desktop=`<div class="grid grid-cols-6 gap-4 p-3 font-semibold text-gray-700 border-b border-gray-200">
+          <div class="text-sm">Time</div><div class="text-sm">Coin</div><div class="text-sm text-center">Type</div>
+          <div class="text-sm text-right">Token Amount</div><div class="text-sm text-right">USD Amount</div><div class="text-sm text-right">Tx</div></div>`;
+        let mobile='';
+        tradeQueue.forEach(t=>{
+          const tag=t.type==='Buy'?'bg-green-100 text-green-700':'bg-red-100 text-red-700';
+          desktop+=`<div class="trade-item grid grid-cols-6 gap-4 p-3 hover:bg-gray-50 border-b border-gray-100">
+            <div class="text-sm text-gray-500">${t.time}</div>
+            <div class="text-sm font-semibold">${t.coinSymbol}</div>
+            <div class="text-center"><span class="px-3 py-1 rounded-full text-xs ${tag}">${t.type}</span></div>
+            <div class="text-right text-sm">${fmtN(t.tokenAmount)}</div>
+            <div class="text-right text-sm font-bold">${fmtC(t.amountUSD)}</div>
+            <div class="text-right text-sm text-emerald-600 truncate"><a href="#" title="Explorer">${t.tx}</a></div>
+          </div>`;
+          mobile+=`<div class="trade-item p-3 border-b border-gray-100 flex justify-between">
+            <div><span class="font-semibold">${t.coinSymbol}</span>
+            <span class="ml-2 px-2 py-0.5 rounded-full text-xs ${tag}">${t.type}</span>
+            <p class="text-xs text-gray-500 mt-1">${fmtN(t.tokenAmount)} tokens</p></div>
+            <div class="text-right"><p class="font-bold text-sm">${fmtC(t.amountUSD)}</p><p class="text-xs text-gray-400">${t.time}</p></div>
+          </div>`;
         });
-    </script>
+        lastTradesBody.innerHTML=desktop;
+        if(lastTradesMobile) lastTradesMobile.innerHTML=mobile;
+      }
+
+      renderTrending(CURRENT_COINS);
+      tradeQueue.unshift(generateTradeFallback()); tradeQueue=tradeQueue.slice(0,MAX_TRADES); renderTrades();
+      setInterval(()=>{tradeQueue.unshift(generateTradeFallback()); tradeQueue=tradeQueue.slice(0,MAX_TRADES); renderTrades();},3000);
+
+      document.getElementById('btnSortChange').addEventListener('click',()=>{CURRENT_COINS.sort((a,b)=>Math.abs(b.change)-Math.abs(a.change));renderTrending(CURRENT_COINS)});
+      document.getElementById('btnSortVol').addEventListener('click',()=>{CURRENT_COINS.sort((a,b)=>b.volume-a.volume);renderTrending(CURRENT_COINS)});
+
+      navTabs.forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          const id=btn.dataset.tab;
+          navTabs.forEach(b=>b.classList.remove('border-emerald-600','text-emerald-600','active-tab'));
+          navTabs.forEach(b=>b.classList.add('border-transparent'));
+          btn.classList.add('border-emerald-600','text-emerald-600','active-tab');
+          document.querySelectorAll('.tab-content').forEach(sec=>sec.classList.toggle('hidden',sec.id!==id));
+        });
+      });
+    });
+  </script>
 </body>
 </html>
