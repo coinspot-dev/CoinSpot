@@ -74,8 +74,12 @@
                 
                 <!-- Logo and Title -->
                 <a href="#" class="flex items-center space-x-2">
-                    <!-- FIX: Logo CoinSpot menggunakan Base64 -->
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAADmBMlBAAAABHNCS... " onerror="this.src='https://placehold.co/36x36/10b981/ffffff?text=CS'" alt="CoinSpot Logo" class="w-9 h-9 rounded-full border border-gray-200"/>
+                    <!-- FIX: GANTI DENGAN SVG COINSPOT (Arrow Up) untuk keandalan di Mobile -->
+                    <div class="w-9 h-9 rounded-full border border-gray-200 bg-emerald-600 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                    </div>
                     <span class="text-2xl font-extrabold text-gray-900">CoinSpot</span>
                 </a>
 
@@ -104,14 +108,17 @@
             <!-- JUDUL DENGAN LOGO BELIEVE -->
             <div class="flex items-center space-x-3 mb-6">
                 <h1 class="text-2xl sm:text-3xl font-bold">Believe Ecosystem Dashboard</h1>
-                <!-- FIX: Logo Believe menggunakan Base64 -->
+                <!-- FIX: GANTI DENGAN SVG BELIEVE (Growth/Cycle) untuk keandalan di Mobile -->
                 <a href="https://believe.app/" target="_blank" aria-label="Go to Believe App website" class="hover:opacity-80 transition duration-150">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAADmBMlBAAAABHNCS... " onerror="this.src='https://placehold.co/32x32/10b981/ffffff?text=B'" alt="Believe Logo" class="w-8 h-8 rounded-full"/>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center ring-1 ring-emerald-400 bg-emerald-600/10">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
                 </a>
             </div>
             
             <!-- Market Snapshot Cards -->
-            <!-- Layout di mobile grid-cols-2 sudah optimal -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-10">
                 
                 <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 card-animate">
@@ -205,7 +212,7 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             <tr class="hover:bg-gray-50 transition duration-150 card-animate">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AlphaGen</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-green-600 font-semibold">$0.00035</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">$0.00035</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500 hidden md:table-cell">$185K</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500 hidden sm:table-cell">$450K</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">10 mins ago</td>
@@ -492,7 +499,6 @@
                         </div>
                     `;
 
-                    // FIX: Mobile Trade View harus lebih ringkas
                     mobileHtml += `
                         <div class="trade-item p-3 border-b border-gray-100 flex justify-between items-center">
                             <div>
