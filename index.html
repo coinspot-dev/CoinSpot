@@ -35,7 +35,8 @@
         .card-animate {
             transition: all 0.3s ease;
         }
-        .card-animate:hover {
+        /* Hover hanya untuk elemen yang bukan tombol */
+        .card-animate:not(button):hover {
             transform: translateY(-4px) scale(1.01);
             box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2), 0 4px 6px -2px rgba(16, 185, 129, 0.05); /* Green Shadow */
         }
@@ -79,11 +80,11 @@
                 
                 <!-- Logo and Title -->
                 <a href="#" class="flex items-center space-x-2">
-                    <!-- LOGO COINSPOT ASLI (Menggunakan URL/Path untuk menjaga file asli, dengan Fallback kuat) -->
+                    <!-- LOGO COINSPOT ASLI (Dibuat Bulat dan tanpa border) -->
                     <img src="./assets/coinspot-icon.png" 
-                         onerror="this.src='https://placehold.co/36x36/10b981/ffffff?text=CS'; this.classList.remove('rounded-full', 'border', 'border-gray-200'); this.classList.add('rounded-full', 'bg-emerald-600');" 
+                         onerror="this.src='https://placehold.co/36x36/10b981/ffffff?text=CS'; this.classList.add('rounded-full', 'bg-emerald-600');" 
                          alt="CoinSpot Logo" 
-                         class="w-9 h-9 rounded-full border border-gray-200 bg-emerald-600"/>
+                         class="w-9 h-9 rounded-full bg-emerald-600"/>
                     <span class="text-2xl font-extrabold text-gray-900">CoinSpot</span>
                 </a>
 
@@ -111,19 +112,19 @@
             <!-- JUDUL DENGAN LOGO BELIEVE -->
             <div class="flex items-center space-x-3 mb-6">
                 <h1 class="text-2xl sm:text-3xl font-bold">Believe Ecosystem Dashboard</h1>
-                <!-- LOGO BELIEVE ASLI (Menggunakan URL/Path untuk menjaga file asli, dengan Fallback kuat) -->
+                <!-- LOGO BELIEVE ASLI (Dibuat Bulat dan tanpa ring) -->
                 <a href="https://believe.app/" target="_blank" aria-label="Go to Believe App website" class="hover:opacity-80 transition duration-150">
                     <img src="./assets/believe-logo.png" 
-                         onerror="this.src='https://placehold.co/32x32/10b981/ffffff?text=B'; this.classList.remove('rounded-full', 'ring-1', 'ring-emerald-400', 'bg-emerald-600/10'); this.classList.add('rounded-full', 'bg-emerald-600');" 
+                         onerror="this.src='https://placehold.co/32x32/10b981/ffffff?text=B'; this.classList.remove('ring-1', 'ring-emerald-400', 'bg-emerald-600/10'); this.classList.add('rounded-full', 'bg-emerald-600');" 
                          alt="Believe Logo" 
-                         class="w-8 h-8 rounded-full ring-1 ring-emerald-400 bg-emerald-600/10"/>
+                         class="w-8 h-8 rounded-full bg-emerald-600/10"/>
                 </a>
             </div>
             
-            <!-- Market Snapshot Cards (Dioptimalkan: grid-cols-2 di mobile) -->
+            <!-- Market Snapshot Cards (Diubah menjadi rounded-3xl agar tidak memotong konten) -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-10">
                 
-                <div class="bg-white rounded-full shadow-lg p-4 sm:p-6 card-animate">
+                <div class="bg-white rounded-3xl shadow-lg p-4 sm:p-6 card-animate">
                     <p class="text-xs sm:text-sm font-medium text-gray-500">Ecosystem Market Cap</p>
                     <p id="market-cap" class="text-xl sm:text-3xl font-bold text-gray-900 mt-1">$0</p>
                     <p id="market-cap-change" class="text-xs text-green-600 mt-2 flex items-center">
@@ -132,7 +133,7 @@
                     </p>
                 </div>
 
-                <div class="bg-white rounded-full shadow-lg p-4 sm:p-6 card-animate">
+                <div class="bg-white rounded-3xl shadow-lg p-4 sm:p-6 card-animate">
                     <p class="text-xs sm:text-sm font-medium text-gray-500">24H Volume</p>
                     <p id="volume" class="text-xl sm:text-3xl font-bold text-gray-900 mt-1">$0</p>
                     <p class="text-xs text-green-600 mt-2 flex items-center">
@@ -141,7 +142,7 @@
                     </p>
                 </div>
 
-                <div class="bg-white rounded-full shadow-lg p-4 sm:p-6 card-animate">
+                <div class="bg-white rounded-3xl shadow-lg p-4 sm:p-6 card-animate">
                     <p class="text-xs sm:text-sm font-medium text-gray-500">Total Coins Launched</p>
                     <p id="total-coins" class="text-xl sm:text-3xl font-bold text-gray-900 mt-1">—</p>
                     <p class="text-xs text-gray-500 mt-2">
@@ -149,7 +150,7 @@
                     </p>
                 </div>
 
-                <div class="bg-white rounded-full shadow-lg p-4 sm:p-6 card-animate">
+                <div class="bg-white rounded-3xl shadow-lg p-4 sm:p-6 card-animate">
                     <p class="text-xs sm:text-sm font-medium text-gray-500">BELIEVE Price</p>
                     <p id="launchcoin-price" class="text-xl sm:text-3xl font-bold text-gray-900 mt-1">$0.0000</p>
                     <p id="launchcoin-change" class="text-xs text-red-600 mt-2 flex items-center">
@@ -320,9 +321,28 @@
 
             // --- Rendering Functions ---
 
+            // Function to handle active button styling
+            const btnSortChange = document.getElementById('btnSortChange');
+            const btnSortVol = document.getElementById('btnSortVol');
+
+            function setActiveSortButton(activeButtonId) {
+                const activeClasses = ['bg-emerald-600', 'text-white', 'hover:bg-emerald-700'];
+                const inactiveClasses = ['bg-gray-100', 'text-gray-700', 'hover:bg-gray-200'];
+
+                [btnSortChange, btnSortVol].forEach(btn => {
+                    if (btn.id === activeButtonId) {
+                        btn.classList.add(...activeClasses);
+                        btn.classList.remove(...inactiveClasses);
+                    } else {
+                        btn.classList.remove(...activeClasses);
+                        btn.classList.add(...inactiveClasses);
+                    }
+                });
+            }
+
+
             function renderTrending(coins) {
-                // Sorting logic
-                coins.sort((a, b) => b.change - a.change);
+                // Initial sorting is by change (default) - no sort call here, just render based on current array order
                 
                 if (!coins.length) {
                     trendingBody.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-gray-500">No data</td></tr>';
@@ -334,14 +354,16 @@
                     const color = c.change >= 0 ? 'text-green-600' : 'text-red-600';
                     const sign = c.change >= 0 ? '+' : '';
                     
-                    return `<tr class="hover:bg-gray-50 transition cursor-pointer card-animate">
+                    return `<tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 text-sm">${i + 1}</td>
                         <td class="px-6 py-4 text-sm font-medium text-emerald-600">${c.name} <span class="text-xs text-gray-400">(${c.symbol})</span></td>
                         <td class="px-6 py-4 text-sm text-right">${fmtC(c.price)}</td>
                         <td class="px-6 py-4 text-sm text-right ${color} font-semibold">${sign}${fmtN(c.change)}%</td>
                         <td class="px-6 py-4 text-sm text-right text-gray-600 hidden md:table-cell">${fmtCompact(c.volume)}</td>
                         <td class="px-6 py-4 text-sm text-right text-gray-600 hidden sm:table-cell">${fmtCompact(c.cap)}</td>
-                        <td class="px-6 py-4 text-center"><button type="button" class="px-3 py-1 text-xs bg-emerald-600 text-white rounded-full hover:bg-emerald-700" onclick="openModal('${c.name}')">BELIEVE</button></td>
+                        <td class="px-6 py-4 text-center">
+                            <button type="button" class="px-3 py-1 text-xs bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition" onclick="openModal('${c.name}')">BELIEVE</button>
+                        </td>
                     </tr>`;
                 }).join('');
 
@@ -417,8 +439,13 @@
             }
 
             // --- Initialization ---
+            
+            // Sort the array initially by change
+            CURRENT_COINS.sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
 
             renderTrending(CURRENT_COINS);
+            setActiveSortButton('btnSortChange'); // Set Change as active by default
+
             // Initial trade render and interval setup
             tradeQueue.unshift(generateTradeFallback()); 
             tradeQueue = tradeQueue.slice(0, MAX_TRADES); 
@@ -432,8 +459,17 @@
 
             // --- Sorting and Tab Listeners ---
 
-            document.getElementById('btnSortChange').addEventListener('click', () => { CURRENT_COINS.sort((a, b) => Math.abs(b.change) - Math.abs(a.change)); renderTrending(CURRENT_COINS) });
-            document.getElementById('btnSortVol').addEventListener('click', () => { CURRENT_COINS.sort((a, b) => b.volume - a.volume); renderTrending(CURRENT_COINS) });
+            document.getElementById('btnSortChange').addEventListener('click', () => { 
+                CURRENT_COINS.sort((a, b) => Math.abs(b.change) - Math.abs(a.change)); 
+                renderTrending(CURRENT_COINS);
+                setActiveSortButton('btnSortChange'); // ADDED: Set visual state
+            });
+
+            document.getElementById('btnSortVol').addEventListener('click', () => { 
+                CURRENT_COINS.sort((a, b) => b.volume - a.volume); 
+                renderTrending(CURRENT_COINS);
+                setActiveSortButton('btnSortVol'); // ADDED: Set visual state
+            });
 
             navTabs.forEach(btn => {
                 btn.addEventListener('click', () => {
