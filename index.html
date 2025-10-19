@@ -112,8 +112,10 @@
             <!-- JUDUL DENGAN LOGO BELIEVE -->
             <div class="flex items-center space-x-3 mb-6">
                 <h1 class="text-2xl sm:text-3xl font-bold">Believe Ecosystem Dashboard</h1> <!-- Ukuran Judul disesuaikan untuk seluler -->
-                <!-- LOGO BELIEVE MELINGKAR (35487.png) - HAPUS logo-spin -->
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAADmBMlBAAAABHNCS... " onerror="this.src='https://placehold.co/32x32/10b981/ffffff?text=B'" alt="Believe Logo" class="w-8 h-8 rounded-full"/>
+                <!-- PERUBAHAN: Logo Believe dibungkus dengan tag <a> -->
+                <a href="https://believe.app/" target="_blank" aria-label="Go to Believe App website" class="hover:opacity-80 transition duration-150">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAADmBMlBAAAABHNCS... " onerror="this.src='https://placehold.co/32x32/10b981/ffffff?text=B'" alt="Believe Logo" class="w-8 h-8 rounded-full"/>
+                </a>
             </div>
             
             <!-- Market Snapshot Cards -->
@@ -261,7 +263,8 @@
             <div class="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 
                 <!-- Icon X/Twitter (Social Media) -->
-                <a href="#" class="text-gray-400 hover:text-emerald-400 transition duration-150" aria-label="CoinSpot X Account">
+                <!-- PERUBAHAN: Menambahkan href ke link Twitter yang diminta -->
+                <a href="https://x.com/CoinSpotBLV" target="_blank" class="text-gray-400 hover:text-emerald-400 transition duration-150" aria-label="CoinSpot X Account">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M18.901 1.153h3.68l-8.042 9.176L24 22.846h-7.614l-6.195-7.018L4.764 1.153h-3.68l8.4 9.617L0 22.846h8.043l5.524-6.312L18.901 1.153zm-2.028 1.84h-.478L7.218 21.053h.478l9.136-17.901z" />
                     </svg>
